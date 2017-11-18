@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "82772208162",
+    "firebase_url": "https://healthchat-801a7.firebaseio.com",
+    "project_id": "healthchat-801a7",
+    "storage_bucket": "healthchat-801a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82772208162:android:c25cdc87a81718c6",
+        "android_client_info": {
+          "package_name": "com.kacper.healthchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82772208162-e6oh3m7224uq63mpipkqkf6uos9a615h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kacper.healthchat",
+            "certificate_hash": "60b91d2314709b7b86ea3252137a517af7c48a33"
+          }
+        },
+        {
+          "client_id": "82772208162-r8de153pql9s2v6em0e7n73kr75aqua0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfM3cnKNW2FYOBJHn9yI6kJWVF51t-YHI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82772208162-r8de153pql9s2v6em0e7n73kr75aqua0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
