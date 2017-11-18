@@ -6,14 +6,18 @@ import android.util.Log;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.kacper.healthchat.utli.OperationInfo;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
 
 /**
  * Created by Kacper on 18.11.2017.
@@ -44,61 +48,62 @@ public class AuthService {
         };
     }
 
-    public OperationInfo createAccount(String email, String password, Boolean isDoctor, Activity activity) {
+    public Single<OperationInfo> createAccount(final String email, final String password, Boolean isDoctor, final Activity activity) {
         Log.d(TAG, "createAccount:" + email);
         final String role = isDoctor ? "doctor" : "patient";
-        final OperationInfo operationInfo = new OperationInfo();
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            operationInfo.setMessage("Registration Success");
-                            operationInfo.setSuccess(Boolean.TRUE);
-                            databaseService.onAuthSuccess(user, role);
-                        } else {
-                            operationInfo.setMessage(task.getException().getMessage());
-                            operationInfo.setSuccess(Boolean.FALSE);
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        }
-                    }
-                });
-        Log.w(TAG, "test");
-        return operationInfo;
+
+        return Single.create(new SingleOnSubscribe<OperationInfo>() {
+
+            @Override
+            public void subscribe(final SingleEmitter<OperationInfo> emitter) throws Exception {
+                Task<AuthResult> task = mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    databaseService.onAuthSuccess(user, role);  //TODO to tez powinno bys asynchroniczne
+
+                                    emitter.onSuccess(new OperationInfo("Registration success", Boolean.TRUE));
+                                } else {
+                                    emitter.tryOnError(new FirebaseException(task.getException().getMessage()));
+                                }
+                            }
+                        });
+            }
+        });
     }
 
-    public OperationInfo signIn(String email, String password, Boolean isDoctor, Activity activity) {
+    public Single<OperationInfo> signIn(final String email, final String password, Boolean isDoctor, final Activity activity) {
         Log.d(TAG, "signIn:" + email);
         final String role = isDoctor ? "doctor" : "patient";
-        final OperationInfo operationInfo = new OperationInfo();
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            operationInfo.setMessage("Login Success");
-                            operationInfo.setSuccess(Boolean.TRUE);
-                        } else {
-                            operationInfo.setMessage(task.getException().getMessage());
-                            operationInfo.setSuccess(Boolean.FALSE);
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        }
-                    }
-                });
-        return operationInfo;
+
+        return Single.create(new SingleOnSubscribe<OperationInfo>() {
+
+            @Override
+            public void subscribe(final SingleEmitter<OperationInfo> emitter) throws Exception {
+                Task<AuthResult> task = mAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    emitter.onSuccess(new OperationInfo("Login success: " + mAuth.getCurrentUser(), Boolean.TRUE));
+                                } else {
+                                    emitter.tryOnError(new FirebaseException(task.getException().getMessage()));
+                                }
+                            }
+                        });
+            }
+        });
     }
 
-    public void onStopAuth(){
+    public void onStopAuth() {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 
-    public void onStartAuth(){
+    public void onStartAuth() {
         mAuth.addAuthStateListener(mAuthListener);
     }
 }

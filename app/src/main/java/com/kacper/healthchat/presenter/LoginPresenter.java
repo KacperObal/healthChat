@@ -1,24 +1,18 @@
 package com.kacper.healthchat.presenter;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.kacper.healthchat.model.User;
 import com.kacper.healthchat.service.AuthService;
 import com.kacper.healthchat.utli.OperationInfo;
 import com.kacper.healthchat.view.LoginView;
 
-import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Kacper on 18.11.2017.
@@ -65,21 +59,66 @@ public class LoginPresenter implements Presenter {
     }
 
     public void createAccount(String email, String password, Boolean isDoctor, Activity activity) {
-        OperationInfo operationInfo = authService.createAccount(email, password, isDoctor, activity);
-        if (operationInfo.getSuccess()) {
-            view.onAuthSuccess(operationInfo.getMessage());
-        } else {
-            view.onAuthFail(operationInfo.getMessage());
-        }
+
+        Scheduler ioScheduler = Schedulers.io();
+        Scheduler uiScheduler = AndroidSchedulers.mainThread();
+
+        authService
+                .createAccount(email, password, isDoctor, activity)
+                .subscribeOn(ioScheduler)
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        view.showFailMessage("Creating account in progres");
+                    }
+                })
+                .observeOn(uiScheduler)
+                .subscribeWith(new DisposableSingleObserver<OperationInfo>() {
+                    @Override
+                    public void onSuccess(OperationInfo operationInfo) {
+                        if (operationInfo.getSuccess()) {
+                            view.onAuthSuccess(operationInfo.getMessage());
+                        } else {
+                            view.onAuthFail(operationInfo.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        view.showFailMessage(e.getMessage());
+                    }
+                });
     }
 
     public void signIn(String email, String password, Boolean isDoctor, Activity activity) {
-        OperationInfo operationInfo = authService.signIn(email, password, isDoctor, activity);
-        if (operationInfo.getSuccess()) {
-            view.onAuthSuccess(operationInfo.getMessage());
-        } else {
-            view.onAuthFail(operationInfo.getMessage());
-        }
+        Scheduler ioScheduler = Schedulers.io();
+        Scheduler uiScheduler = AndroidSchedulers.mainThread();
+
+        authService
+                .signIn(email, password, isDoctor, activity)
+                .subscribeOn(ioScheduler)
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        view.showFailMessage("Loging in progres");
+                    }
+                })
+                .observeOn(uiScheduler)
+                .subscribeWith(new DisposableSingleObserver<OperationInfo>() {
+                    @Override
+                    public void onSuccess(OperationInfo operationInfo) {
+                        if (operationInfo.getSuccess()) {
+                            view.onAuthSuccess(operationInfo.getMessage());
+                        } else {
+                            view.onAuthFail(operationInfo.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        view.showFailMessage(e.getMessage());
+                    }
+                });
     }
 
     public void goToDashboard() {

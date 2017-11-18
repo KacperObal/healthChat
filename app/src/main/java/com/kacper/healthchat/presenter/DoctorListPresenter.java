@@ -52,6 +52,5 @@ public class DoctorListPresenter implements Presenter {
 
     public void getDoctorList(){
 
-        view.displayDoctorList(doctorArray);
     }
 }

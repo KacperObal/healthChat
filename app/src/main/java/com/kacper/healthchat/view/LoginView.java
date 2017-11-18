@@ -11,5 +11,6 @@ public interface LoginView  {
     void onLoginButtonClick(View view);
     void onAuthFail(String message);
     void onAuthSuccess(String messageSuccess);
+    void showFailMessage(String message);
     void goToDashboard();
 }

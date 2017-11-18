@@ -67,6 +67,11 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
+    public void showFailMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void goToDashboard() {
         Intent k = new Intent(this, DashboardActivity.class);
         startActivity(k);
