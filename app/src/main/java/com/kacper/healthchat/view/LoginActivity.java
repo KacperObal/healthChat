@@ -1,9 +1,8 @@
 package com.kacper.healthchat.view;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 
 import com.kacper.healthchat.R;
 import com.kacper.healthchat.presenter.LoginPresenter;
-import com.kacper.healthchat.presenter.Presenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,7 +56,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
-    public void signInFail(String message) {
+    public void onAuthFail(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
