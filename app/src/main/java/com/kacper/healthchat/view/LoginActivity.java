@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -23,6 +24,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     public EditText mEmailField;
     @BindView(R.id.mPasswordField)
     public EditText mPasswordField;
+    @BindView(R.id.mSpecialityField)
+    public EditText mSpecialityField;
     @BindView(R.id.mImADoctorCheckbox)
     public CheckBox mImADoctorCheckbox;
 
@@ -32,6 +35,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         setContentView(R.layout.login_activity);
         ButterKnife.bind(this);
         loginPresenter.onCreate();
+        onRoleChanged();
     }
 
     @Override
@@ -46,13 +50,28 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         loginPresenter.onStop();
     }
 
+    public void onRoleChanged() {
+        mImADoctorCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    mSpecialityField.setVisibility(View.VISIBLE);
+                } else {
+                    mSpecialityField.setVisibility(View.INVISIBLE);
+                }
 
-    public void onRegistrationButtonClick(View view){
-        loginPresenter.createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString(), mImADoctorCheckbox.isChecked(), LoginActivity.this);
+            }
+        });
     }
 
-    public void onLoginButtonClick(View view){
-        loginPresenter.signIn(mEmailField.getText().toString(), mPasswordField.getText().toString(), mImADoctorCheckbox.isChecked(),LoginActivity.this);
+    public void onRegistrationButtonClick(View view) {
+        loginPresenter.createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString(),
+                mImADoctorCheckbox.isChecked(), mSpecialityField.getText().toString(), LoginActivity.this);
+    }
+
+    public void onLoginButtonClick(View view) {
+        loginPresenter.signIn(mEmailField.getText().toString(), mPasswordField.getText().toString(),
+                mImADoctorCheckbox.isChecked(), LoginActivity.this);
     }
 
     @Override

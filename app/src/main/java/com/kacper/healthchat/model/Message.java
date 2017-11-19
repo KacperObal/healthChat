@@ -11,7 +11,19 @@ public class Message {
     private String message;
     private Boolean isRead;
     private String sender;
+    private String senderName;
+    private String recipientName;
     private String recipient;
+
+    public Message(String message, String sender, String recipient, String senderName, String recipientName) {
+        this.date = new Date();
+        this.message = message;
+        this.isRead = false;
+        this.sender = sender;
+        this.senderName = senderName;
+        this.recipient = recipient;
+        this.recipientName = recipientName;
+    }
 
     public Message() {
         this.date = new Date();
@@ -55,5 +67,21 @@ public class Message {
 
     public void setRecipient(String recipient) {
         this.recipient = recipient;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getRecipientName() {
+        return recipientName;
+    }
+
+    public void setRecipientName(String recipientName) {
+        this.recipientName = recipientName;
     }
 }

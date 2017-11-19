@@ -24,12 +24,14 @@
             android:id="@+id/mDoctorList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="goToDoctorList"
             android:text="Find Doctor" />
 
         <Button
             android:id="@+id/mChats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="goToChat"
             android:text="Chat" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -17,6 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.DashboardActivity" />
+        <activity android:name=".view.DoctorListActivity" />
+        <activity android:name=".view.ChatActivity" />
     </application>
 
 </manifest>

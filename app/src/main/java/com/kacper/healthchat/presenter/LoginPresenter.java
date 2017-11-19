@@ -58,13 +58,13 @@ public class LoginPresenter implements Presenter {
         authService.onStopAuth();
     }
 
-    public void createAccount(String email, String password, Boolean isDoctor, Activity activity) {
+    public void createAccount(String email, String password, Boolean isDoctor, String speciality, Activity activity) {
 
         Scheduler ioScheduler = Schedulers.io();
         Scheduler uiScheduler = AndroidSchedulers.mainThread();
 
         authService
-                .createAccount(email, password, isDoctor, activity)
+                .createAccount(email, password, isDoctor, speciality, activity)
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override

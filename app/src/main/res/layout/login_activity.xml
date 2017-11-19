@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="login"
-            android:inputType="textPersonName" />
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/mPasswordField"
@@ -28,6 +28,16 @@
             android:ems="10"
             android:hint="password"
             android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/mSpecialityField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="speciality"
+            android:inputType="text"
+            android:singleLine="false"
+            android:visibility="invisible" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,6 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
+                android:checked="false"
                 android:text="I'm a doctor" />
         </RelativeLayout>
     </LinearLayout>

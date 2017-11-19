@@ -3,6 +3,7 @@ package com.kacper.healthchat.view;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 
 import com.kacper.healthchat.R;
@@ -28,14 +29,14 @@ public class DashboardActivity extends AppCompatActivity implements DashboardVie
         dashboardPresenter.onCreate();
     }
 
-    @Override
-    public void goToDoctorList() {
+
+    public void goToDoctorList(View view) {
         Intent k = new Intent(this, DoctorListActivity.class);
         startActivity(k);
     }
 
-    @Override
-    public void goToChat() {
+
+    public void goToChat(View view) {
         Intent k = new Intent(this, ChatActivity.class);
         startActivity(k);
     }
