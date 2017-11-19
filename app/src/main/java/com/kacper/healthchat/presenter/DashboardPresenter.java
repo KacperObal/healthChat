@@ -47,8 +47,8 @@ public class DashboardPresenter implements Presenter {
     }
 
     private void createWelcomeMessage(){
-        //Todo : get user data
-        String message = "siemanko";
+
+        String message = "Hello, find doctor !";
         view.createWelcomeMessage(message);
     }
 

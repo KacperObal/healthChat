@@ -13,12 +13,19 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp">
 
-        <EditText
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            app:srcCompat="@android:drawable/sym_def_app_icon" />
+
+        <TextView
             android:id="@+id/mWelcomeMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            android:text="Hello, find doctor !"
+            android:textAlignment="center" />
 
         <Button
             android:id="@+id/mDoctorList"
@@ -27,11 +34,5 @@
             android:onClick="goToDoctorList"
             android:text="Find Doctor" />
 
-        <Button
-            android:id="@+id/mChats"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="goToChat"
-            android:text="Chat" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

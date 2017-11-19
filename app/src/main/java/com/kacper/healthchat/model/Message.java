@@ -14,6 +14,7 @@ public class Message {
     private String senderName;
     private String recipientName;
     private String recipient;
+    private String sender_recipient;
 
     public Message(String message, String sender, String recipient, String senderName, String recipientName) {
         this.date = new Date();
@@ -23,6 +24,7 @@ public class Message {
         this.senderName = senderName;
         this.recipient = recipient;
         this.recipientName = recipientName;
+        this.sender_recipient = sender+recipient;
     }
 
     public Message() {
@@ -83,5 +85,13 @@ public class Message {
 
     public void setRecipientName(String recipientName) {
         this.recipientName = recipientName;
+    }
+
+    public String getSender_recipient() {
+        return sender_recipient;
+    }
+
+    public void setSender_recipient(String sender_recipient) {
+        this.sender_recipient = sender_recipient;
     }
 }

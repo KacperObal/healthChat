@@ -28,8 +28,6 @@ public class DoctorListActivity  extends AppCompatActivity implements DoctorList
 
     DoctorListPresenter doctorListPresenter = new DoctorListPresenter(this);
 
-    @BindView(R.id.mDoctorListTitleText)
-    public EditText mEmailField;
     @BindView(R.id.mDoctorList)
     public ListView mDoctorListView;
     ArrayAdapter usersAdapter;

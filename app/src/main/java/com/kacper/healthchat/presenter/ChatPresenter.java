@@ -45,7 +45,11 @@ public class ChatPresenter implements Presenter {
 
     @Override
     public void onCreate() {
+        databaseService.onInit();
+        authService.initAuth();
 
+        getCurrentUser();
+//        getAllMessages();
     }
 
     @Override
@@ -104,6 +108,38 @@ public class ChatPresenter implements Presenter {
 
 
     public void onSendMessage(String inputMessage) {
-        Message message = new Message(inputMessage,currUser.getId(),doctor.getId());
+        Message message = new Message(inputMessage,currUser.getId(),doctor.getId(),currUser.getUsername(),doctor.getUsername());
+        databaseService.saveMessage(message);
+    }
+
+    public void getAllMessages(){
+
+        Scheduler ioScheduler = Schedulers.io();
+        Scheduler uiScheduler = AndroidSchedulers.mainThread();
+
+        databaseService.getMesseges(currUser.getId(), doctor.getId())
+                .subscribeOn(ioScheduler)
+                .doOnSubscribe(new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable disposable) throws Exception {
+                        //view.showLoadingDoctors();
+                    }
+                })
+                .observeOn(uiScheduler)
+                .subscribeWith(new DisposableSingleObserver<List<Message>>() {
+                    @Override
+                    public void onSuccess(List<Message> messages) {
+                        if (!messages.isEmpty()) {
+                            view.displayMessages(messages);
+                        } else {
+                           // view.showNoDoctorAvailable();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        //view.showNoDoctorAvailable();
+                    }
+                });
     }
 }

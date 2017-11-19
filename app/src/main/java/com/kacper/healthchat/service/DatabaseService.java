@@ -7,13 +7,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.kacper.healthchat.model.Doctor;
+import com.kacper.healthchat.model.Message;
 import com.kacper.healthchat.model.User;
 import com.kacper.healthchat.utli.ResultCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
@@ -110,6 +113,54 @@ public class DatabaseService {
             }
         });
 
+    }
+
+    public void saveMessage(Message message) {
+        UUID uid = UUID.randomUUID();
+        mDatabase.child("message").child(uid.toString()).setValue(message);
+    }
+
+    public Single<List<Message>> getMesseges(final String currId, final String doctorId){
+            return Single.create(new SingleOnSubscribe<List<Message>>() {
+                @Override
+                public void subscribe(final SingleEmitter<List<Message>> emiter) throws Exception {
+                    getAllMessagesByCurrentUserAndDoctor(currId,doctorId, new ResultCallback<List<Message>>() {
+                        @Override
+                        public void onSuccess(@NonNull List<Message> result) {
+                            emiter.onSuccess(result);
+                        }
+
+                        @Override
+                        public void onFailure(Exception exception) {
+                            emiter.tryOnError(exception);
+                        }
+                    });
+                }
+            });
+    }
+
+    public void getAllMessagesByCurrentUserAndDoctor(String userId, String doctorId, final ResultCallback<List<Message>> callback){
+
+        final List<Message> messages = new ArrayList<>();
+
+        Query query = mDatabase.child("message").orderByChild("sender_recipient").equalTo(userId+doctorId);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                messages.clear();
+                for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+                    Message user = postSnapshot.getValue(Message.class);
+                    messages.add(user);
+                }
+                callback.onSuccess(messages);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getMessage());
+            }
+        });
     }
 
 }

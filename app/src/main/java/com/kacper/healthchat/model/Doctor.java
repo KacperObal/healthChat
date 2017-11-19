@@ -21,11 +21,12 @@ public class Doctor extends User implements Parcelable{
     }
 
     public Doctor(Parcel in) {
-        String[] data = new String[3];
+        String[] data = new String[4];
         in.readStringArray(data);
         super.setUsername(data[0]);
         super.setEmail(data[1]);
         this.speciality = data[2];
+        super.setId(data[3]);
     }
 
     public static final Creator<Doctor> CREATOR = new Creator<Doctor>() {
@@ -56,7 +57,7 @@ public class Doctor extends User implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeStringArray(new String[] {super.getUsername(), super.getEmail(), speciality});
+        parcel.writeStringArray(new String[] {super.getUsername(), super.getEmail(), speciality, super.getId()});
     }
 
     @Override

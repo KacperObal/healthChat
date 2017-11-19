@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.kacper.healthchat.R;
 import com.kacper.healthchat.presenter.DashboardPresenter;
@@ -17,7 +18,7 @@ public class DashboardActivity extends AppCompatActivity implements DashboardVie
     DashboardPresenter dashboardPresenter = new DashboardPresenter(this);
 
     @BindView(R.id.mWelcomeMessage)
-    public EditText mWelcomeMessage;
+    public TextView mWelcomeMessage;
 
 
 
