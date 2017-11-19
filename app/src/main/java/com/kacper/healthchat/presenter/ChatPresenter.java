@@ -12,6 +12,7 @@ import com.kacper.healthchat.view.DoctorListView;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -48,8 +49,7 @@ public class ChatPresenter implements Presenter {
         databaseService.onInit();
         authService.initAuth();
 
-        getCurrentUser();
-//        getAllMessages();
+        getAllMessages();
     }
 
     @Override
@@ -76,48 +76,13 @@ public class ChatPresenter implements Presenter {
     public void onStop() {
 
     }
-    public void getCurrentUser(){
+
+    public void getAllMessages(){
         Scheduler ioScheduler = Schedulers.io();
         Scheduler uiScheduler = AndroidSchedulers.mainThread();
 
         authService.getCurrentUser()
-                .subscribeOn(ioScheduler)
-                .doOnSubscribe(new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable disposable) throws Exception {
-                        //view.showLoadingDoctors();
-                    }
-                })
-                .observeOn(uiScheduler)
-                .subscribeWith(new DisposableSingleObserver<User>() {
-                    @Override
-                    public void onSuccess(User user) {
-                        if (user != null) {
-                            currUser = user;
-                        } else {
-                            //view.showNoDoctorAvailable();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        //view.showNoDoctorAvailable();
-                    }
-                });
-    }
-
-
-    public void onSendMessage(String inputMessage) {
-        Message message = new Message(inputMessage,currUser.getId(),doctor.getId(),currUser.getUsername(),doctor.getUsername());
-        databaseService.saveMessage(message);
-    }
-
-    public void getAllMessages(){
-
-        Scheduler ioScheduler = Schedulers.io();
-        Scheduler uiScheduler = AndroidSchedulers.mainThread();
-
-        databaseService.getMesseges(currUser.getId(), doctor.getId())
+                .flatMap(currentUser -> databaseService.getMesseges(currentUser.getId(), doctor.getId()))
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
@@ -129,17 +94,19 @@ public class ChatPresenter implements Presenter {
                 .subscribeWith(new DisposableSingleObserver<List<Message>>() {
                     @Override
                     public void onSuccess(List<Message> messages) {
-                        if (!messages.isEmpty()) {
-                            view.displayMessages(messages);
-                        } else {
-                           // view.showNoDoctorAvailable();
-                        }
+//                        view.
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        //view.showNoDoctorAvailable();
+//                        view.
                     }
                 });
+    }
+
+
+    public void onSendMessage(String inputMessage) {
+        Message message = new Message(inputMessage,currUser.getId(),doctor.getId(),currUser.getUsername(),doctor.getUsername());
+        databaseService.saveMessage(message);
     }
 }
