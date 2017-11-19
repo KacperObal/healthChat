@@ -94,7 +94,7 @@ public class ChatPresenter implements Presenter {
                 .subscribeWith(new DisposableSingleObserver<List<Message>>() {
                     @Override
                     public void onSuccess(List<Message> messages) {
-//                        view.
+                        view.displayMessages(messages);
                     }
 
                     @Override
@@ -104,9 +104,13 @@ public class ChatPresenter implements Presenter {
                 });
     }
 
-
+    private void getAllMessageAndSaveUser(User user){
+        currUser = user;
+        databaseService.getMesseges(user.getId(), doctor.getId());
+    }
     public void onSendMessage(String inputMessage) {
-        Message message = new Message(inputMessage,currUser.getId(),doctor.getId(),currUser.getUsername(),doctor.getUsername());
+        Message message = new Message(inputMessage,currUser.getId(),doctor.getId(),
+                currUser.getUsername(),doctor.getUsername());
         databaseService.saveMessage(message);
     }
 }

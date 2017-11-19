@@ -12,6 +12,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.kacper.healthchat.model.Doctor;
 import com.kacper.healthchat.model.Message;
 import com.kacper.healthchat.model.User;
+import com.kacper.healthchat.presenter.ChatPresenter;
 import com.kacper.healthchat.utli.ResultCallback;
 
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import io.reactivex.SingleOnSubscribe;
 
 public class DatabaseService {
     private DatabaseReference mDatabase;
-
 
     public void onInit(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -153,6 +153,7 @@ public class DatabaseService {
                     Message user = postSnapshot.getValue(Message.class);
                     messages.add(user);
                 }
+
                 callback.onSuccess(messages);
             }
 
