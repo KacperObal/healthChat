@@ -9,7 +9,8 @@ import android.view.View;
 public interface LoginView  {
     void onRegistrationButtonClick(View view);
     void onLoginButtonClick(View view);
-    void signInFail(String message);
+    void onAuthFail(String message);
     void onAuthSuccess(String messageSuccess);
+    void showFailMessage(String message);
     void goToDashboard();
 }

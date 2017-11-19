@@ -1,11 +1,16 @@
 package com.kacper.healthchat.presenter;
 
-import android.app.Activity;
 import android.util.Log;
 
+import com.kacper.healthchat.model.Doctor;
+import com.kacper.healthchat.model.Message;
+import com.kacper.healthchat.model.User;
 import com.kacper.healthchat.service.AuthService;
-import com.kacper.healthchat.utli.OperationInfo;
-import com.kacper.healthchat.view.LoginView;
+import com.kacper.healthchat.service.DatabaseService;
+import com.kacper.healthchat.view.ChatView;
+import com.kacper.healthchat.view.DoctorListView;
+
+import java.util.List;
 
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -15,22 +20,36 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by Kacper on 18.11.2017.
+ * Created by Kacper on 19.11.2017.
  */
 
-public class LoginPresenter implements Presenter {
+public class ChatPresenter implements Presenter {
 
-    private static final String TAG = "LoginActivity";
-    private final LoginView view;
-    private AuthService authService = new AuthService();
+    private static final String TAG = "ChatActivity";
 
-    public LoginPresenter(LoginView view) {
+    public Doctor doctor;
+    public User currUser;
+    public ChatView view;
+
+    AuthService authService = new AuthService();
+    DatabaseService databaseService = new DatabaseService();
+
+
+    public ChatPresenter(ChatView view) {
         this.view = view;
+    }
+
+    public void onInit(Doctor doctor){
+        this.doctor = doctor;
     }
 
     @Override
     public void onCreate() {
+        databaseService.onInit();
         authService.initAuth();
+
+        getCurrentUser();
+//        getAllMessages();
     }
 
     @Override
@@ -50,80 +69,77 @@ public class LoginPresenter implements Presenter {
 
     @Override
     public void onStart() {
-        authService.onStartAuth();
+
     }
 
     @Override
     public void onStop() {
-        authService.onStopAuth();
+
     }
-
-    public void createAccount(String email, String password, Boolean isDoctor, String speciality, Activity activity) {
-
+    public void getCurrentUser(){
         Scheduler ioScheduler = Schedulers.io();
         Scheduler uiScheduler = AndroidSchedulers.mainThread();
 
-        authService
-                .createAccount(email, password, isDoctor, speciality, activity)
+        authService.getCurrentUser()
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
-                        view.showFailMessage("Creating account in progres");
+                        //view.showLoadingDoctors();
                     }
                 })
                 .observeOn(uiScheduler)
-                .subscribeWith(new DisposableSingleObserver<OperationInfo>() {
+                .subscribeWith(new DisposableSingleObserver<User>() {
                     @Override
-                    public void onSuccess(OperationInfo operationInfo) {
-                        if (operationInfo.getSuccess()) {
-                            view.onAuthSuccess(operationInfo.getMessage());
+                    public void onSuccess(User user) {
+                        if (user != null) {
+                            currUser = user;
                         } else {
-                            view.onAuthFail(operationInfo.getMessage());
+                            //view.showNoDoctorAvailable();
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        view.showFailMessage(e.getMessage());
+                        //view.showNoDoctorAvailable();
                     }
                 });
     }
 
-    public void signIn(String email, String password, Boolean isDoctor, Activity activity) {
+
+    public void onSendMessage(String inputMessage) {
+        Message message = new Message(inputMessage,currUser.getId(),doctor.getId(),currUser.getUsername(),doctor.getUsername());
+        databaseService.saveMessage(message);
+    }
+
+    public void getAllMessages(){
+
         Scheduler ioScheduler = Schedulers.io();
         Scheduler uiScheduler = AndroidSchedulers.mainThread();
 
-        authService
-                .signIn(email, password, isDoctor, activity)
+        databaseService.getMesseges(currUser.getId(), doctor.getId())
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
                     public void accept(Disposable disposable) throws Exception {
-                        view.showFailMessage("Loging in progres");
+                        //view.showLoadingDoctors();
                     }
                 })
                 .observeOn(uiScheduler)
-                .subscribeWith(new DisposableSingleObserver<OperationInfo>() {
+                .subscribeWith(new DisposableSingleObserver<List<Message>>() {
                     @Override
-                    public void onSuccess(OperationInfo operationInfo) {
-                        if (operationInfo.getSuccess()) {
-                            view.onAuthSuccess(operationInfo.getMessage());
+                    public void onSuccess(List<Message> messages) {
+                        if (!messages.isEmpty()) {
+                            view.displayMessages(messages);
                         } else {
-                            view.onAuthFail(operationInfo.getMessage());
+                           // view.showNoDoctorAvailable();
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        view.showFailMessage(e.getMessage());
+                        //view.showNoDoctorAvailable();
                     }
                 });
     }
-
-    public void goToDashboard() {
-        Log.d(TAG, "Going to dashboard");
-        view.goToDashboard();
-    }
-
 }
