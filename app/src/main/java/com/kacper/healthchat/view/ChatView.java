@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface ChatView {
     void displayMessages(List<Message> messages);
+    void updateMessages(List<Message> messages);
 }

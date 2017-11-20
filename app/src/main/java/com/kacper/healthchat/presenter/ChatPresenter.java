@@ -1,6 +1,7 @@
 package com.kacper.healthchat.presenter;
 
 import android.util.Log;
+import android.view.View;
 
 import com.kacper.healthchat.model.Doctor;
 import com.kacper.healthchat.model.Message;
@@ -10,10 +11,12 @@ import com.kacper.healthchat.service.DatabaseService;
 import com.kacper.healthchat.view.ChatView;
 import com.kacper.healthchat.view.DoctorListView;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -82,7 +85,7 @@ public class ChatPresenter implements Presenter {
         Scheduler uiScheduler = AndroidSchedulers.mainThread();
 
         authService.getCurrentUser()
-                .flatMap(currentUser -> databaseService.getMesseges(currentUser.getId(), doctor.getId()))
+                .flatMap(currentUser -> getAllMessageAndSaveUser(currentUser))
                 .subscribeOn(ioScheduler)
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
@@ -94,6 +97,7 @@ public class ChatPresenter implements Presenter {
                 .subscribeWith(new DisposableSingleObserver<List<Message>>() {
                     @Override
                     public void onSuccess(List<Message> messages) {
+                        Collections.sort(messages);
                         view.displayMessages(messages);
                     }
 
@@ -104,13 +108,18 @@ public class ChatPresenter implements Presenter {
                 });
     }
 
-    private void getAllMessageAndSaveUser(User user){
+    private Single<List<Message>> getAllMessageAndSaveUser(User user){
         currUser = user;
-        databaseService.getMesseges(user.getId(), doctor.getId());
+        return databaseService.getMesseges(user.getId(), doctor.getId(), view);
     }
+
     public void onSendMessage(String inputMessage) {
         Message message = new Message(inputMessage,currUser.getId(),doctor.getId(),
                 currUser.getUsername(),doctor.getUsername());
         databaseService.saveMessage(message);
+    }
+
+    public void updateMessages(List<Message> messages) {
+        view.updateMessages(messages);
     }
 }

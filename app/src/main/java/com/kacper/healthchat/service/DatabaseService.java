@@ -1,6 +1,7 @@
 package com.kacper.healthchat.service;
 
 import android.support.annotation.NonNull;
+import android.view.View;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -14,8 +15,11 @@ import com.kacper.healthchat.model.Message;
 import com.kacper.healthchat.model.User;
 import com.kacper.healthchat.presenter.ChatPresenter;
 import com.kacper.healthchat.utli.ResultCallback;
+import com.kacper.healthchat.view.ChatView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -120,14 +124,17 @@ public class DatabaseService {
         mDatabase.child("message").child(uid.toString()).setValue(message);
     }
 
-    public Single<List<Message>> getMesseges(final String currId, final String doctorId){
+    public Single<List<Message>> getMesseges(final String currId, final String doctorId, ChatView view){
             return Single.create(new SingleOnSubscribe<List<Message>>() {
                 @Override
                 public void subscribe(final SingleEmitter<List<Message>> emiter) throws Exception {
                     getAllMessagesByCurrentUserAndDoctor(currId,doctorId, new ResultCallback<List<Message>>() {
                         @Override
                         public void onSuccess(@NonNull List<Message> result) {
+                            Collections.sort(result);
                             emiter.onSuccess(result);
+                            ChatPresenter chatPresenter = new ChatPresenter(view);
+                            chatPresenter.updateMessages(result);
                         }
 
                         @Override

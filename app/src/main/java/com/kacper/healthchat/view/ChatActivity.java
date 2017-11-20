@@ -36,6 +36,9 @@ public class ChatActivity  extends AppCompatActivity implements ChatView {
 
     private static final String TAG = "ChatActivity";
     private ChatPresenter chatPresenter = new ChatPresenter(this);
+    MessageAdapter messageAdapter;
+    List<Message> allMessages = new ArrayList<>();
+
     @BindView(R.id.currDoctorEmail)
     public TextView currDoctorEmail;
     @BindView(R.id.currDoctorSpeciality)
@@ -59,6 +62,7 @@ public class ChatActivity  extends AppCompatActivity implements ChatView {
         currDoctorEmail.setText(doctor.getEmail());
         currDoctorSpeciality.setText(doctor.getSpeciality());
         currDoctorUserName.setText(doctor.getUsername());
+
     }
 
     @Override
@@ -72,14 +76,33 @@ public class ChatActivity  extends AppCompatActivity implements ChatView {
     }
 
     public void onSendMessage(View view){
-
         chatPresenter.onSendMessage(mInputMessage.getText().toString());
+        mInputMessage.setText("");
+        scrollMyListViewToBottom();
     }
 
     @Override
     public void displayMessages(final List<Message> messages) {
-        MessageAdapter messageAdapter;
         messageAdapter = new MessageAdapter(messages, getApplicationContext());
         chatListView.setAdapter(messageAdapter);
+        allMessages = messages;
+        scrollMyListViewToBottom();
     }
+
+    @Override
+    public void updateMessages(List<Message> messages) {
+        allMessages = messages;
+        chatListView.invalidateViews();
+        scrollMyListViewToBottom();
+    }
+
+    private void scrollMyListViewToBottom() {
+        chatListView.post(new Runnable() {
+            @Override
+            public void run() {
+                chatListView.setSelection(messageAdapter.getCount() - 1);
+            }
+        });
+    }
+
 }

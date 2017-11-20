@@ -1,12 +1,14 @@
 package com.kacper.healthchat.model;
 
+import android.support.annotation.NonNull;
+
 import java.util.Date;
 
 /**
  * Created by Kacper on 18.11.2017.
  */
 
-public class Message {
+public class Message implements Comparable<Message> {
     private Date date;
     private String message;
     private Boolean isRead;
@@ -93,5 +95,10 @@ public class Message {
 
     public void setSender_recipient(String sender_recipient) {
         this.sender_recipient = sender_recipient;
+    }
+
+    @Override
+    public int compareTo(@NonNull Message o) {
+        return getDate().compareTo(o.getDate());
     }
 }
