@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:windowSoftInputMode="adjustPan"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -41,40 +42,46 @@
             android:textAlignment="center"
             android:textSize="18sp" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/BackgroundMessage">
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-            <ListView
-                android:id="@+id/chatListView"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/mSendButton"
-                android:layout_alignParentStart="true"
-                android:layout_marginBottom="31dp"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="8dp" />
+                android:background="@color/BackgroundMessage"
+                tools:layout_editor_absoluteY="495dp">
 
-            <EditText
-                android:id="@+id/mInputMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/mSendButton"
-                android:ems="10"
-                android:inputType="textPersonName" />
+                <ListView
+                    android:id="@+id/chatListView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/mSendButton"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="31dp"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="8dp" />
 
-            <Button
-                android:id="@+id/mSendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignTop="@+id/mInputMessage"
-                android:onClick="onSendMessage"
-                android:text="SEND" />
-        </RelativeLayout>
+                <EditText
+                    android:id="@+id/mInputMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/mSendButton"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+
+                <Button
+                    android:id="@+id/mSendButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@+id/mInputMessage"
+                    android:onClick="onSendMessage"
+                    android:text="SEND" />
+            </RelativeLayout>
+        </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
